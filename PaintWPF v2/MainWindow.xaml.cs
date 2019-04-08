@@ -22,9 +22,10 @@ namespace PaintWPF_v2
 {
     public partial class MainWindow : Window
     {
-        double x1, x2, y1, y2;
-        public Brush DrawColor;
-        int cntClear = 2;
+        //double x1, x2, y1, y2;
+        private int cntClear = 2;
+        private int cntClr = 2;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,59 +52,100 @@ namespace PaintWPF_v2
             }
         }
 
-        private void Black_Click(object sender, RoutedEventArgs e)
+        private void Color_Click(object sender, RoutedEventArgs e)
         {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Black;
+            switch ((sender as Button).Name)
+            {
+                case "Black":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Black;
+                    break;
+                }
+                case "Gray":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Gray;
+                    break;
+                }
+                case "White":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.White;
+                    break;
+                }
+                case "Red":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Red;
+
+                        break;
+                }
+                case "Orange":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Orange;
+
+                        break;
+                }
+                case "Yellow":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Yellow;
+
+                        break;
+                }
+                case "Pink":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Pink;
+
+                        break;
+                }
+                case "Green":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Green;
+                    break;
+                }
+                case "Aquamarine":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Aquamarine;
+                    break;
+                }
+                case "SkyBlue":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.SkyBlue;
+                    break;
+                }
+                case "Blue":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Blue;
+                    break;
+                }
+                case "Purple":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Color = Colors.Purple;
+                    break;
+                }
+            }
         }
 
-        private void Gray_Click(object sender, RoutedEventArgs e)
+        private void Thickness(object sender, RoutedEventArgs e)
         {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Gray;
-        }
-
-        private void White_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.White;
-        }
-
-        private void Red_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Red;
-        }
-
-        private void Orange_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Orange;
-        }
-
-        private void Yellow_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Yellow;
-        }
-
-        private void Pink_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Pink;
-        }
-
-        private void Green_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Green;
-        }
-
-        private void Aquamarine_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Aquamarine;
-        }
-
-        private void SkyBlue_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.SkyBlue;
-        }
-
-        private void Blue_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Blue;
+            switch ((sender as Button).Name)
+            {
+                case "ThicknessSmall":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Height = 2;
+                    InkCanvas1.DefaultDrawingAttributes.Width = 2;
+                        break;
+                }
+                case "ThicknessMedium":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Height = 10;
+                    InkCanvas1.DefaultDrawingAttributes.Width = 10;
+                    break;
+                }
+                case "ThicknessLarge":
+                {
+                    InkCanvas1.DefaultDrawingAttributes.Height = 20;
+                    InkCanvas1.DefaultDrawingAttributes.Width = 20;
+                    break;
+                }
+            }
         }
 
         private void Resize_Click(object sender, RoutedEventArgs e)
@@ -121,12 +163,7 @@ namespace PaintWPF_v2
             }
         }
 
-        private void Purple_Click(object sender, RoutedEventArgs e)
-        {
-            InkCanvas1.DefaultDrawingAttributes.Color = Colors.Purple;
-        }
-
-        private void ClearingTool_Click(object sender, RoutedEventArgs e)
+        private void ClearingToolAll_Click(object sender, RoutedEventArgs e)
         {
             cntClear++;
             if (cntClear % 2 == 1)
@@ -149,6 +186,19 @@ namespace PaintWPF_v2
             string filename = openImg.FileName;
             var fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
             InkCanvas1.Strokes = new StrokeCollection(fs);
+        }
+
+        private void ClearingTool_Click(object sender, RoutedEventArgs e)
+        {
+            cntClr++;
+            if (cntClr % 2 == 1)
+            {
+                InkCanvas1.EditingMode = InkCanvasEditingMode.EraseByPoint;
+            }
+            else
+            {
+                InkCanvas1.EditingMode = InkCanvasEditingMode.Ink;
+            }
         }
     }
 }

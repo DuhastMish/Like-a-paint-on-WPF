@@ -104,5 +104,11 @@
     <Resource Include="Images\Clear.png" />
     <Resource Include="Images\Lastik.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ColorFill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ClearingTool.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
