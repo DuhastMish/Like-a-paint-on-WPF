@@ -12,7 +12,7 @@
         </Grid.ColumnDefinitions>
         <Border BorderThickness="2" Height="400" VerticalAlignment="Top" Width="697" Margin="10,10,142.6,0" CornerRadius="3" BorderBrush="DodgerBlue">
             <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" >
-                <InkCanvas x:Name="InkCanvas1" Width="700" Height="400" Margin="20,20,20,20" >
+                <InkCanvas x:Name="InkCanvas1" Width="700" Height="400" Margin="20,20,20,20" PreviewMouseLeftButtonDown="InkCanvas1_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="InkCanvas1_PreviewMouseLeftButtonUp" PreviewMouseMove="InkCanvas1_PreviewMouseMove" >
                     <InkCanvas.DefaultDrawingAttributes >
                         <DrawingAttributes
                             Color = "Black" Height ="2"  Width = "2" />
@@ -21,13 +21,15 @@
             </ScrollViewer>
         </Border>
         <StackPanel Margin="730,10,29.6,0" Background="White" Height="400" VerticalAlignment="Top">
-            <Grid Height="90" Width="90">
+            <Grid Height="150" Width="90">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
@@ -51,15 +53,21 @@
                     <Image Source="Images/ColorFill.png"/>
                 </Button>-->
                 <Button Grid.Column="0" Grid.Row="2" x:Name="ThicknessSmall" Click="Thickness">
-                    <Ellipse Fill="Black" Height="5" Width="5">
-                    </Ellipse>
+                    <Ellipse Fill="Black" Height="5" Width="5"/>
                 </Button>
                 <Button Grid.Column="1" Grid.Row="2" x:Name="ThicknessMedium" Click="Thickness">
-                    <Ellipse Fill="Black" Height="10" Width="10"></Ellipse>
+                    <Ellipse Fill="Black" Height="10" Width="10"/>
                 </Button>
                 <Button Grid.Column="2" Grid.Row="2" x:Name="ThicknessLarge" Click="Thickness">
-                    <Ellipse Fill="Black" Height="15" Width="15"></Ellipse>
+                    <Ellipse Fill="Black" Height="15" Width="15"/>
                 </Button>
+                <Button Grid.Column="0" Grid.Row="3" x:Name="Rectangle" Click="ShapeChanged">
+                    <Rectangle Height="12" Width="20" Stroke="Black" StrokeThickness="1"/>
+                </Button>
+                <Button Grid.Column="1" Grid.Row="3" x:Name="Ellipse" Click="ShapeChanged">
+                    <Ellipse Height="10" Width="20" Stroke="Black" StrokeThickness="1"/>
+                </Button>
+
             </Grid>
             <TextBlock TextWrapping="Wrap" Text="Размер холста:" Height="20" TextAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="HeightCanvas"  Height="20" TextWrapping="Wrap" Text="400"/>
