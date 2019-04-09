@@ -110,5 +110,11 @@
   <ItemGroup>
     <Resource Include="Images\ClearingTool.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Cursor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pen.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

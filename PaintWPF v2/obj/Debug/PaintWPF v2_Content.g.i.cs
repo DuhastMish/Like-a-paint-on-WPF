@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/clearingtool.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/pen.png")]
 
 

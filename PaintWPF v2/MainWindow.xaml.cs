@@ -3,20 +3,18 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 
 namespace PaintWPF_v2
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        //double x1, x2, y1, y2;
         private int cntClear = 2;
         private int cntClr = 2;
-        public Point Coordinates { get; set; }
-        public string Shape { get; set; }/* = "noShape";*/
-        public bool Toggle { get; set; }
+        public Brush ShcolorBrush = Brushes.Black;
 
         public MainWindow()
         {
@@ -24,17 +22,31 @@ namespace PaintWPF_v2
             InkCanvas1.EditingMode = InkCanvasEditingMode.Ink;
         }
 
+        public Point Coordinates { get; set; }
+        public double StrokeShape { get; set; } = 2;
+        public string Shape { get; set; }
+        public bool Toggle { get; set; }
+
+        private Brush ShapeColorBrush
+        {
+            get => ShcolorBrush;
+            set => ShcolorBrush = value;
+        }
+
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             InkCanvas1.Strokes.Clear();
+            InkCanvas1.Children.Clear();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            var saveimg = new SaveFileDialog();
-            saveimg.FileName = "Изображение";
-            saveimg.Filter =
-                "Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png";
+            var saveimg = new SaveFileDialog
+            {
+                FileName = "Изображение",
+                Filter =
+                    "Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png"
+            };
 
             var result = saveimg.ShowDialog();
             if (result == true)
@@ -52,65 +64,73 @@ namespace PaintWPF_v2
                 case "Black":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Black;
+                    ShapeColorBrush = Brushes.Black;
                     break;
                 }
                 case "Gray":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Gray;
+                    ShapeColorBrush = Brushes.Gray;
                     break;
                 }
                 case "White":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.White;
+                    ShapeColorBrush = Brushes.White;
                     break;
                 }
                 case "Red":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Red;
-
+                    ShapeColorBrush = Brushes.Red;
                     break;
                 }
                 case "Orange":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Orange;
-
+                    ShapeColorBrush = Brushes.Orange;
                     break;
                 }
                 case "Yellow":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Yellow;
-
+                    ShapeColorBrush = Brushes.Yellow;
                     break;
                 }
                 case "Pink":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Pink;
-
+                    ShapeColorBrush = Brushes.Pink;
                     break;
                 }
                 case "Green":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Green;
+                    ShapeColorBrush = Brushes.Green;
                     break;
                 }
                 case "Aquamarine":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Aquamarine;
+                    ShapeColorBrush = Brushes.Aquamarine;
                     break;
                 }
                 case "SkyBlue":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.SkyBlue;
+                    ShapeColorBrush = Brushes.SkyBlue;
                     break;
                 }
                 case "Blue":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Blue;
+                    ShapeColorBrush = Brushes.Blue;
                     break;
                 }
                 case "Purple":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Color = Colors.Purple;
+                    ShapeColorBrush = Brushes.Purple;
                     break;
                 }
             }
@@ -124,18 +144,21 @@ namespace PaintWPF_v2
                 {
                     InkCanvas1.DefaultDrawingAttributes.Height = 2;
                     InkCanvas1.DefaultDrawingAttributes.Width = 2;
+                    StrokeShape = 2;
                     break;
                 }
                 case "ThicknessMedium":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Height = 10;
                     InkCanvas1.DefaultDrawingAttributes.Width = 10;
+                    StrokeShape = 10;
                     break;
                 }
                 case "ThicknessLarge":
                 {
                     InkCanvas1.DefaultDrawingAttributes.Height = 20;
                     InkCanvas1.DefaultDrawingAttributes.Width = 20;
+                    StrokeShape = 20;
                     break;
                 }
             }
@@ -194,46 +217,51 @@ namespace PaintWPF_v2
                 case "Rectangle":
                 {
                     Shape = "Rectangle";
+                    InkCanvas1.EditingMode = InkCanvasEditingMode.None;
                     break;
                 }
                 case "Ellipse":
                 {
                     Shape = "Ellipse";
+                    InkCanvas1.EditingMode = InkCanvasEditingMode.None;
                     break;
                 }
             }
         }
-        private void DrawRectangle(double X, double Y)                                            //рисует прямоугольник
+
+        private void DrawRectangle(double X, double Y)
         {
-            Rectangle myRectangle = new Rectangle()
+            var myRectangle = new Rectangle
             {
-                //Stroke = DrawC,
+                Stroke = ShapeColorBrush,
                 Margin = new Thickness(X, Y, 0, 0),
-                //StrokeThickness = StrokeShape,
+                StrokeThickness = StrokeShape,
                 Height = 1,
                 Width = 1
             };
             InkCanvas1.Children.Add(myRectangle);
         }
-        private void DrawEllipse(double X, double Y)                                              //рисует овал 
+
+        private void DrawEllipse(double X, double Y)
         {
-            Ellipse myEllipse = new Ellipse()
+            var myEllipse = new Ellipse
             {
-                //Stroke = DrawC,
+                Stroke = ShapeColorBrush,
                 Margin = new Thickness(X, Y, 0, 0),
-                //StrokeThickness = StrokeShape,
+                StrokeThickness = StrokeShape,
                 Height = 1,
                 Width = 1
             };
             InkCanvas1.Children.Add(myEllipse);
         }
+
         private void BuildShape(Point p)
         {
-            Shape newShape = (Shape)InkCanvas1.Children[InkCanvas1.Children.Count - 1];
+            var newShape = (Shape) InkCanvas1.Children[InkCanvas1.Children.Count - 1];
             double tempX, tempY;
-            if (((p.X) - Coordinates.X) > 0)
+            if (p.X - Coordinates.X > 0)
             {
-                newShape.Width = (p.X) - Coordinates.X;
+                newShape.Width = p.X - Coordinates.X;
                 tempX = Coordinates.X;
             }
             else
@@ -241,9 +269,10 @@ namespace PaintWPF_v2
                 newShape.Width = Coordinates.X - p.X;
                 tempX = p.X;
             }
-            if (((p.Y) - Coordinates.Y) > 0)
+
+            if (p.Y - Coordinates.Y > 0)
             {
-                newShape.Height = (p.Y) - Coordinates.Y;
+                newShape.Height = p.Y - Coordinates.Y;
                 tempY = Coordinates.Y;
             }
             else
@@ -251,6 +280,7 @@ namespace PaintWPF_v2
                 newShape.Height = Coordinates.Y - p.Y;
                 tempY = p.Y;
             }
+
             newShape.Margin = new Thickness(tempX, tempY, 0, 0);
         }
 
@@ -266,29 +296,24 @@ namespace PaintWPF_v2
                     break;
             }
         }
-        private void InkCanvas1_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+        private void InkCanvas1_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Coordinates = new Point(e.GetPosition(InkCanvas1).X, e.GetPosition(InkCanvas1).Y);
             StartDrawFigure();
             Toggle = true;
         }
 
-        private void InkCanvas1_PreviewMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void InkCanvas1_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Toggle = false;
         }
 
-        private void InkCanvas1_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void InkCanvas1_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            //if (Shape == "noShape")
-            //{
-            //    return;
-            //}
-            if (Toggle == false)
-            {
-                return;
-            }
-            Point MovePoint = new Point()
+            Coord.Text = e.GetPosition(InkCanvas1).X + " , " + e.GetPosition(InkCanvas1).Y;
+            if (Toggle == false) return;
+            var MovePoint = new Point
             {
                 X = e.GetPosition(InkCanvas1).X,
                 Y = e.GetPosition(InkCanvas1).Y
@@ -302,6 +327,12 @@ namespace PaintWPF_v2
                     BuildShape(MovePoint);
                     break;
             }
+        }
+
+        private void Pen_Click(object sender, RoutedEventArgs e)
+        {
+            Shape = string.Empty;
+            InkCanvas1.EditingMode = InkCanvasEditingMode.Ink;
         }
     }
 }
