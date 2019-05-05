@@ -61,6 +61,7 @@ namespace PaintWPF_v2
                 {
                     if (saveimg.FilterIndex == 1)
                     {
+                        //InkCanvas1.Children.
                         this.InkCanvas1.Strokes.Save(file);
                         file.Close();
                     }
@@ -76,20 +77,6 @@ namespace PaintWPF_v2
                         file.Close();
                     }
                 }
-                //int marg = int.Parse(this.InkCanvas1.Margin.Left.ToString());
-                //var filename = saveimg.FileName;
-                //FileStream fs = new FileStream(filename, FileMode.Create);
-                //RenderTargetBitmap rtb =
-                //    new RenderTargetBitmap((int)this.InkCanvas1.ActualWidth - marg,
-                //        (int)this.InkCanvas1.ActualHeight - marg, 0, 0,
-                //        PixelFormats.Default);
-                ////RenderTargetBitmap rtb = new RenderTargetBitmap((int)InkCanvas1.Width, (int)InkCanvas1.Height, 96d, 96d, PixelFormats.Default);
-                //rtb.Render(InkCanvas1);
-                //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                //encoder.Frames.Add(BitmapFrame.Create(rtb));
-
-                //encoder.Save(fs);
-                //fs.Close();
             }
         }
 
@@ -258,10 +245,6 @@ namespace PaintWPF_v2
                 {
                     MessageBox.Show(exc.Message, Title);
                 }
-                //var filename = openImg.FileName;
-                //ImageBrush brush = new ImageBrush();
-                //brush.ImageSource = new BitmapImage(new Uri(filename, UriKind.Relative));
-                //InkCanvas1.Background = brush;
             }
         }
 
