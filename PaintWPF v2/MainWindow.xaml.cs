@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 
@@ -49,24 +50,46 @@ namespace PaintWPF_v2
             {
                 FileName = "Изображение",
                 Filter =
-                    "Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png"
+                    "Ink Serialized Format (*.isf)|*.isf|"+"Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png"
             };
 
             var result = saveimg.ShowDialog();
             if (result == true)
             {
+                using (FileStream file = new FileStream(saveimg.FileName,
+                    FileMode.Create, FileAccess.Write))
+                {
+                    if (saveimg.FilterIndex == 1)
+                    {
+                        this.InkCanvas1.Strokes.Save(file);
+                        file.Close();
+                    }
+                    else
+                    {
+                        int marg = int.Parse(this.InkCanvas1.Margin.Left.ToString());
+                        RenderTargetBitmap rtb = new RenderTargetBitmap((int)this.InkCanvas1.ActualWidth - marg,
+                            (int)this.InkCanvas1.ActualHeight - marg, 0, 0, PixelFormats.Default);
+                        rtb.Render(this.InkCanvas1);
+                        BmpBitmapEncoder encoder = new BmpBitmapEncoder();
+                        encoder.Frames.Add(BitmapFrame.Create(rtb));
+                        encoder.Save(file);
+                        file.Close();
+                    }
+                }
+                //int marg = int.Parse(this.InkCanvas1.Margin.Left.ToString());
                 //var filename = saveimg.FileName;
-                //using (FileStream fs = new FileStream(filename, FileMode.Create))
-                //{
-                //    foreach (var Ch in InkCanvas1.Children)
-                //    {
-                //        InkCanvas1.Strokes.Save(Ch);
-                //    }
-                //    InkCanvas1.Strokes.Save(fs);
-                //}
-                var filename = saveimg.FileName;
-                var fs = new FileStream(filename, FileMode.Create);
-                InkCanvas1.Strokes.Save(fs);
+                //FileStream fs = new FileStream(filename, FileMode.Create);
+                //RenderTargetBitmap rtb =
+                //    new RenderTargetBitmap((int)this.InkCanvas1.ActualWidth - marg,
+                //        (int)this.InkCanvas1.ActualHeight - marg, 0, 0,
+                //        PixelFormats.Default);
+                ////RenderTargetBitmap rtb = new RenderTargetBitmap((int)InkCanvas1.Width, (int)InkCanvas1.Height, 96d, 96d, PixelFormats.Default);
+                //rtb.Render(InkCanvas1);
+                //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                //encoder.Frames.Add(BitmapFrame.Create(rtb));
+
+                //encoder.Save(fs);
+                //fs.Close();
             }
         }
 
@@ -207,20 +230,38 @@ namespace PaintWPF_v2
             var openImg = new OpenFileDialog();
             openImg.FileName = "*";
             openImg.Filter =
-                "Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png";
+                "Ink Serialized Format (*.isf)|*.isf|"+"Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif|JPEG Image (.jpeg)|*.jpeg|Png Image (.png)|*.png";
             var result = openImg.ShowDialog();
             if (result == true)
             {
-                var filename = openImg.FileName;
-
-                //using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-                //{
-                //    StrokeCollection sc = new StrokeCollection(fs);
-                //    InkCanvas1.Strokes = sc;
-                //}
-                var fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
-                InkCanvas1.Strokes = new StrokeCollection(fs);
-                //InkCanvas1.Strokes = sc;
+                InkCanvas1.Background = Brushes.White;
+                InkCanvas1.Strokes.Clear();
+                try
+                {
+                    using (FileStream file = new FileStream(openImg.FileName,
+                        FileMode.Open, FileAccess.Read))
+                    {
+                        if (openImg.FileName.ToLower().EndsWith(".isf"))
+                        {
+                            this.InkCanvas1.Strokes = new StrokeCollection(file);
+                            file.Close();
+                        }
+                        else
+                        {
+                            ImageBrush brush = new ImageBrush();
+                            brush.ImageSource = new BitmapImage(new Uri(openImg.FileName, UriKind.Relative));
+                            InkCanvas1.Background = brush;
+                        }
+                    }
+                }
+                catch (Exception exc)
+                {
+                    MessageBox.Show(exc.Message, Title);
+                }
+                //var filename = openImg.FileName;
+                //ImageBrush brush = new ImageBrush();
+                //brush.ImageSource = new BitmapImage(new Uri(filename, UriKind.Relative));
+                //InkCanvas1.Background = brush;
             }
         }
 
@@ -267,6 +308,20 @@ namespace PaintWPF_v2
                     InkCanvas1.EditingMode = InkCanvasEditingMode.None;
                     break;
             }
+        }
+
+        private void Back(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                InkCanvas1.Children.RemoveAt(InkCanvas1.Children.Count - 1);
+            }
+            catch { };
+            try
+            {
+                InkCanvas1.Strokes.RemoveAt(InkCanvas1.Strokes.Count - 1);
+            }
+            catch { };
         }
         private void DrawLine(Point p1, Point p2)           //рисует линию
         {
