@@ -14,7 +14,6 @@ namespace PaintWPF_v2
     public partial class MainWindow
     {
         private int cntClr = 2; //Счетчик нажатия ластика
-        public Brush ShcolorBrush = Brushes.Black; //цвета = стандартный цвет
         public bool TogglePolygon { get; set; } //включатель многоугольника
 
         public MainWindow()
@@ -29,12 +28,8 @@ namespace PaintWPF_v2
         public string Shape { get; set; } //тип фигуры
         public bool Toggle { get; set; } //Включение рисования многоугольника
 
-        private Brush ShapeColorBrush
-        {
-            get => ShcolorBrush;
-            set => ShcolorBrush = value;
-        }
-
+        public Brush ShcolorBrush = Brushes.Black; //цвета = стандартный цвет
+        private Brush ShapeColorBrush;
 
         private void Clear_Click(object sender, RoutedEventArgs e) //Стереть все
         {
@@ -55,16 +50,22 @@ namespace PaintWPF_v2
             var result = saveimg.ShowDialog();
             if (result == true)
             {
-                using (FileStream file = new FileStream(saveimg.FileName,
-                    FileMode.Create, FileAccess.Write))
+                if (saveimg.FilterIndex == 1)
                 {
-                    if (saveimg.FilterIndex == 1)
+                    string strXAML = System.Windows.Markup.XamlWriter.Save(InkCanvas1);
+
+                    using (var fs = File.Create(saveimg.FileName))
                     {
-                        //InkCanvas1.Children.
-                        InkCanvas1.Strokes.Save(file);
-                        file.Close();
+                        using (var streamwriter = new StreamWriter(fs))
+                        {
+                            streamwriter.Write(strXAML);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    using (FileStream file = new FileStream(saveimg.FileName,
+                        FileMode.Create, FileAccess.Write))
                     {
                         var marg = int.Parse(InkCanvas1.Margin.Left.ToString());
                         RenderTargetBitmap rtb = new RenderTargetBitmap((int) InkCanvas1.ActualWidth - marg,
@@ -180,7 +181,7 @@ namespace PaintWPF_v2
             }
             catch
             {
-                MessageBox.Show("Введите целые числа ниже(H-высоту и W-ширину)");
+                MessageBox.Show("Вы ввели слишком большие числа или не целые");
             }
         }
 
@@ -203,7 +204,7 @@ namespace PaintWPF_v2
                     {
                         if (openImg.FileName.ToLower().EndsWith(".isf"))
                         {
-                            InkCanvas1.Strokes = new StrokeCollection(file);
+                            DeSerializeXAML(InkCanvas1, openImg.FileName);
                             file.Close();
                         }
                         else
@@ -499,7 +500,33 @@ namespace PaintWPF_v2
             Shape = "Cursor";
             InkCanvas1.EditingMode = InkCanvasEditingMode.Select;
         }
+        public static void SerializeToXAML(InkCanvas elements, string filename)
+        {
+            string strXAML = System.Windows.Markup.XamlWriter.Save(elements);
 
+            using (var fs = File.Create(filename))
+            {
+                using (var streamwriter = new StreamWriter(fs))
+                {
+                    streamwriter.Write(strXAML);
+                }
+            }
+        }
+
+        public static void DeSerializeXAML(InkCanvas elements, string filename)
+        {
+            var context = System.Windows.Markup.XamlReader.GetWpfSchemaContext();
+
+            var settings = new System.Xaml.XamlObjectWriterSettings
+            {
+                RootObjectInstance = elements
+            };
+            using (var reader = new System.Xaml.XamlXmlReader(filename))
+            using (var writer = new System.Xaml.XamlObjectWriter(context, settings))
+            {
+                System.Xaml.XamlServices.Transform(reader, writer);
+            }
+        }
         private void Standartcursor()
         {
             Mouse.Capture(null);
@@ -521,10 +548,6 @@ namespace PaintWPF_v2
 
             bmpCopied.Render(dv);
             Clipboard.SetImage(bmpCopied);
-        }
-
-        public static void PasteUIElementFromClipboard(FrameworkElement element)
-        {
         }
 
         private void CopyCommand(object sender, ExecutedRoutedEventArgs e) //Обработчик ктрл+с
